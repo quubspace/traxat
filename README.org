@@ -1,0 +1,2 @@
+* AST: Automated Satellite Tracker
+  Program to enable az/el control of the Quub tabletop satellite tracker.
