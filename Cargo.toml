@@ -1,8 +1,18 @@
 [package]
 name = "automated-satellite-tracker"
 version = "0.1.0"
+authors = ["Daniil Rose <daniil.rose@member.fsf.org>", "Quub, LLC <info@quub.space>"]
+description = "Program to enable az/el control of the Quub tabletop satellite tracker."
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+homepage = "https://github.com/quubspace/automated-satellite-tracker"
+repository = "https://github.com/quubspace/automated-satellite-tracker"
+license = "BSD 3"
+keywords = ["robotics", "embedded", "cli"]
+categories = ["command-line-utilities"]
+readme = "README.org"
 
 [dependencies]
+clap = "2"
+anyhow = "1"
+rusqlite = { version = "0.24", features = ["bundled"] }
+rppal = "0.13.1"
