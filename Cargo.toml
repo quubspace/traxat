@@ -7,12 +7,11 @@ edition = "2021"
 homepage = "https://github.com/quubspace/automated-satellite-tracker"
 repository = "https://github.com/quubspace/automated-satellite-tracker"
 license = "BSD 3"
-keywords = ["robotics", "embedded", "cli"]
-categories = ["command-line-utilities"]
+keywords = ["robotics", "embedded"]
+categories = ["embedded"]
 readme = "README.org"
 
 [dependencies]
-clap = "2"
 anyhow = "1"
-rusqlite = { version = "0.24", features = ["bundled"] }
 rppal = "0.13.1"
+tokio = { version = "1", features = ["full"] }
