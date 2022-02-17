@@ -33,15 +33,6 @@ then
     exit 1
 fi
 
-if ! command -v cross &> /dev/null
-then
-    echo "Cross could not be found! Installing now..."
-    cargo install cross
-fi
-
-# TODO: Run Tests
-# cross test
-
 rsync -r ${SOURCE_PATH} ${TARGET_HOST}:${TARGET_PATH}
 
 echo "Upload successful!"
