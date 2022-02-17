@@ -1,5 +1,6 @@
 use anyhow::Result;
-use tokio::io::AsyncReadExt;
+use std::str;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
 #[tokio::main]
@@ -12,9 +13,9 @@ async fn main() -> Result<()> {
         println!("Socket now listening.");
 
         tokio::spawn(async move {
-            let mut buf = [0; 4096];
+            let mut buf = [0; 1024];
 
-            // In a loop, read data from the socket and print the data back.
+            // In a loop, read data from the socket and write a command back to rotctld.
             loop {
                 let n = match socket.read(&mut buf).await {
                     Ok(n) if n == 0 => return,
@@ -25,8 +26,14 @@ async fn main() -> Result<()> {
                     }
                 };
 
-                // Print data
-                println!("{:?}", buf);
+                let response = str::from_utf8(&buf[0..n]).unwrap();
+                println!("{:?}", response);
+
+                // Write the data back to receive rotctld command
+                if let Err(e) = socket.write_all(&buf[0..n]).await {
+                    eprintln!("failed to write to socket; err = {:?}", e);
+                    return;
+                }
             }
         });
     }
