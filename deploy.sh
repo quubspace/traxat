@@ -33,8 +33,10 @@ then
     exit 1
 fi
 
-rsync -r ${SOURCE_PATH} ${TARGET_HOST}:${TARGET_PATH}
+rsync -r --exclude "${SOURCE_PATH}/target/*" ${SOURCE_PATH} ${TARGET_HOST}:${TARGET_PATH}
 
 echo "Upload successful!"
 
-TERM="xterm" ssh $TARGET_HOST "cd $TARGET_PATH && /home/pi/.cargo/bin/cargo run"
+# This is a bit janky, but essentially kill the service if it exists, otherwise
+# don't worry, and keep deploying.
+TERM="xterm" ssh $TARGET_HOST "kill \$(lsof -t -i:4533) || true && cd $TARGET_PATH && /home/pi/.cargo/bin/cargo run"
