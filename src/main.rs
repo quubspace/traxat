@@ -1,4 +1,8 @@
-use std::{io, str};
+use std::{
+    convert::Infallible,
+    io, process,
+    str::{self, FromStr},
+};
 
 use anyhow::Result;
 
@@ -10,6 +14,38 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
 #[derive(Debug)]
+enum Message {
+    PSet(f32, f32),
+    PGet,
+    Close,
+    NotACommand,
+}
+
+impl FromStr for Message {
+    type Err = Infallible;
+
+    fn from_str(response: &str) -> Result<Message, Infallible> {
+        let res: Vec<String> = response.split_whitespace().map(|s| s.to_string()).collect();
+
+        let (cmd, params) = res.split_first().unwrap();
+
+        let params: Vec<f32> = params
+            .into_iter()
+            .map(|x| x.parse::<f32>().unwrap())
+            .collect();
+
+        info!("Command: {:?}\nParameters: {:?}", cmd, params);
+
+        match cmd.as_str() {
+            "p" => Ok(Message::PGet),
+            "P" => Ok(Message::PSet(params[0], params[1])),
+            "q" => Ok(Message::Close),
+            _ => Ok(Message::NotACommand),
+        }
+    }
+}
+
+#[derive(Debug)]
 struct ActionHandler<'a> {
     rotator: &'a mut Rotator,
 }
@@ -19,55 +55,60 @@ impl<'a> ActionHandler<'a> {
         Self { rotator }
     }
 
-    pub fn handle_p_set(&mut self, azimuth: i32, elevation: i32) {
+    pub fn handle_p_set(&mut self, azimuth: f32, elevation: f32) -> String {
         self.rotator.xt = azimuth;
         self.rotator.yt = elevation;
 
         info!("Set to {}:{}", azimuth, elevation);
 
         self.rotator.mv();
+
+        String::from("")
     }
 
-    pub fn handle_p_get(&self) -> Vec<(String, String)> {
-        vec![(
-            format!("{}", self.rotator.az),
-            format!("{}", self.rotator.ele),
-        )]
+    pub fn handle_p_get(&self) -> String {
+        String::from(format!("{}\n{}", self.rotator.az, self.rotator.ele))
     }
 
-    pub fn close_connection(&self) {
-        exit(0);
+    pub fn close_connection(&self) -> String {
+        warn!("Program is exiting, rotctld sent quit!");
+        process::exit(0);
     }
 
-    pub fn handle_message(&self, cmd: &str) {
-        "\n{}{}{}\n"
-        // let actions = HashMap::from([
-        //     ("P", self.handle_p_set(azimuth, elevation)),
-        //     ("p", 24),
-        //     ("q", 12),
-        // ]);
+    pub fn handle_message(&mut self, msg: Message) -> String {
+        if matches!(msg, Message::Close) {
+            self.close_connection();
+        }
+
+        let r = match msg {
+            Message::PSet(az, ele) => self.handle_p_set(az, ele),
+            Message::PGet => self.handle_p_get(),
+            _ => String::from("Not a command!"),
+        };
+
+        String::from(format!("{}\n", r))
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 struct Rotator {
-    ele: i32,
-    az: i32,
-    xc: i32,
-    yc: i32,
-    yt: i32,
-    xt: i32,
+    ele: f32,
+    az: f32,
+    xc: f32,
+    yc: f32,
+    yt: f32,
+    xt: f32,
 }
 
 impl Rotator {
     pub fn new() -> Rotator {
         Rotator {
-            ele: 20 as i32,
-            az: 0 as i32,
-            xc: 6.666 as i32,
-            yc: 1.458 as i32,
-            yt: 20 as i32,
-            xt: 0 as i32,
+            ele: 20 as f32,
+            az: 0 as f32,
+            xc: 6.666 as f32,
+            yc: 1.458 as f32,
+            yt: 20 as f32,
+            xt: 0 as f32,
         }
     }
 
@@ -100,7 +141,7 @@ async fn main() -> Result<()> {
                 message
             ))
         })
-        .level(LevelFilter::Error)
+        .level(LevelFilter::Info)
         .chain(io::stdout())
         .chain(log_file("./ast.log").expect("No permission to write to the current directory."))
         .apply()
@@ -108,10 +149,6 @@ async fn main() -> Result<()> {
 
     let mut rotator = Rotator::new();
     rotator.zero();
-
-    let _handler = ActionHandler {
-        rotator: &mut rotator,
-    };
 
     let rotctld_port = "4533";
     let listener = TcpListener::bind(format!("0.0.0.0:{}", rotctld_port)).await?;
@@ -122,6 +159,8 @@ async fn main() -> Result<()> {
 
         tokio::spawn(async move {
             let mut buf = [0; 1024];
+
+            let mut handler = ActionHandler::new(&mut rotator);
 
             loop {
                 let n = match socket.read(&mut buf).await {
@@ -134,9 +173,14 @@ async fn main() -> Result<()> {
                 };
 
                 let response = str::from_utf8(&buf[0..n]).unwrap();
-                println!("{:?}", response);
+                info!("Response: {:?}", response);
 
-                // let ret = a.handle_message()
+                // This will never actually error, since it returns Infallible
+                let ret: String = handler
+                    .handle_message(Message::from_str(response).unwrap())
+                    .to_owned();
+
+                info!("Return: {:?}", ret);
 
                 if let Err(e) = socket.write_all(&buf[0..n]).await {
                     warn!("failed to write to socket; err = {:?}", e);
