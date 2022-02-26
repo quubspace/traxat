@@ -7,8 +7,11 @@ use std::{
 use anyhow::Result;
 
 use chrono;
-use fern::{log_file, Dispatch};
-use log::{info, warn, LevelFilter};
+use fern::{
+    colors::{Color, ColoredLevelConfig},
+    log_file, Dispatch,
+};
+use log::{debug, info, warn, LevelFilter};
 
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
@@ -34,7 +37,7 @@ impl FromStr for Message {
             .map(|x| x.parse::<f32>().unwrap())
             .collect();
 
-        info!("Command: {:?}\nParameters: {:?}", cmd, params);
+        debug!("Command: {:?} - Parameters: {:?}", cmd, params);
 
         match cmd.as_str() {
             "p" => Ok(Message::PGet),
@@ -63,7 +66,7 @@ impl<'a> ActionHandler<'a> {
 
         self.rotator.mv();
 
-        String::from("")
+        String::from("\n")
     }
 
     pub fn handle_p_get(&self) -> String {
@@ -86,7 +89,7 @@ impl<'a> ActionHandler<'a> {
             _ => String::from("Not a command!"),
         };
 
-        String::from(format!("{}\n", r))
+        String::from(r)
     }
 }
 
@@ -131,21 +134,7 @@ impl Rotator {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    Dispatch::new()
-        .format(|out, message, record| {
-            out.finish(format_args!(
-                "{}[{}][{}] {}",
-                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
-                record.target(),
-                record.level(),
-                message
-            ))
-        })
-        .level(LevelFilter::Info)
-        .chain(io::stdout())
-        .chain(log_file("./ast.log").expect("No permission to write to the current directory."))
-        .apply()
-        .expect("Failed to dispatch Fern logger!");
+    init_logging();
 
     let mut rotator = Rotator::new();
     rotator.zero();
@@ -155,12 +144,10 @@ async fn main() -> Result<()> {
 
     loop {
         let (mut socket, _) = listener.accept().await?;
-        info!("Socket now listening.");
+        info!("AST is now ready to connect to rotctld.");
 
         tokio::spawn(async move {
             let mut buf = [0; 1024];
-
-            let mut handler = ActionHandler::new(&mut rotator);
 
             loop {
                 let n = match socket.read(&mut buf).await {
@@ -173,14 +160,14 @@ async fn main() -> Result<()> {
                 };
 
                 let response = str::from_utf8(&buf[0..n]).unwrap();
-                info!("Response: {:?}", response);
+                debug!("Response from rotctld: {:?}", response);
 
                 // This will never actually error, since it returns Infallible
-                let ret: String = handler
+                let ret: String = ActionHandler::new(&mut rotator)
                     .handle_message(Message::from_str(response).unwrap())
                     .to_owned();
 
-                info!("Return: {:?}", ret);
+                debug!("Send to rotctld: {:?}", ret);
 
                 if let Err(e) = socket.write_all(&buf[0..n]).await {
                     warn!("failed to write to socket; err = {:?}", e);
@@ -189,4 +176,38 @@ async fn main() -> Result<()> {
             }
         });
     }
+}
+
+fn init_logging() {
+    let colors_line = ColoredLevelConfig::new()
+        .error(Color::Red)
+        .warn(Color::Yellow)
+        .info(Color::White)
+        .debug(Color::White)
+        .trace(Color::BrightBlack);
+
+    let colors_level = colors_line.clone().info(Color::Green);
+
+    Dispatch::new()
+        .format(move |out, message, record| {
+            out.finish(format_args!(
+                "{color_line}[{date}][{target}][{level}{color_line}] {message}\x1B[0m",
+                color_line = format_args!(
+                    "\x1B[{}m",
+                    colors_line.get_color(&record.level()).to_fg_str()
+                ),
+                date = chrono::Local::now().format("%Y-%m-%d %H:%M:%S"),
+                target = record.target(),
+                level = colors_level.color(record.level()),
+                message = message,
+            ));
+        })
+        .level(LevelFilter::Debug)
+        .level_for("pretty_colored", LevelFilter::Trace)
+        .chain(io::stdout())
+        .chain(log_file("./ast.log").expect("No permission to write to the current directory."))
+        .apply()
+        .expect("Failed to dispatch Fern logger!");
+
+    debug!("Logging initialisation complete.");
 }

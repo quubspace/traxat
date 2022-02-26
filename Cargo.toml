@@ -13,7 +13,7 @@ readme = "README.org"
 
 [dependencies]
 log = { version = "0.4" }
-fern = { version = "0.5" }
+fern = { version = "0.5", features = ["colored"] }
 chrono = { version = "0.4" }
 anyhow = { version = "1" }
 tokio = { version = "1", features = ["full"] }
