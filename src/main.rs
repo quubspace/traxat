@@ -6,7 +6,6 @@ use std::{
 
 use anyhow::Result;
 
-use chrono;
 use fern::{
     colors::{Color, ColoredLevelConfig},
     log_file, Dispatch,
@@ -53,6 +52,11 @@ fn main() -> Result<()> {
             // This will never actually error, since it returns Infallible
             let ret: String = ActionHandler::new(&mut rotator)
                 .handle_message(Message::from_str(response).unwrap());
+
+            if ret == "rotctld_quit" {
+                warn!("Closing connection, rotctld sent quit!");
+                break;
+            }
 
             debug!("Send to rotctld: {:?}", ret);
 

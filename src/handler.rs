@@ -27,25 +27,15 @@ impl<'a> ActionHandler<'a> {
     }
 
     pub fn handle_p_get(&self) -> String {
-        String::from(format!("{}\n{}", self.rotator.az, self.rotator.ele))
-    }
-
-    pub fn close_connection(&self) -> String {
-        warn!("Program is exiting, rotctld sent quit!");
-        process::exit(0);
+        format!("{}\n{}", self.rotator.az, self.rotator.ele)
     }
 
     pub fn handle_message(&mut self, msg: Message) -> String {
-        if matches!(msg, Message::Close) {
-            self.close_connection();
-        }
-
-        let r = match msg {
+        match msg {
             Message::PSet(az, ele) => self.handle_p_set(az, ele),
             Message::PGet => self.handle_p_get(),
+            Message::Close => String::from("rotctld_quit"),
             _ => String::from("Not a command!"),
-        };
-
-        String::from(r)
+        }
     }
 }
