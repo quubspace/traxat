@@ -16,8 +16,8 @@ impl<'a> ActionHandler<'a> {
     }
 
     pub fn handle_p_set(&mut self, azimuth: f32, elevation: f32) -> String {
-        self.rotator.xt = azimuth;
-        self.rotator.yt = elevation;
+        self.rotator.az = azimuth;
+        self.rotator.ele = elevation;
 
         info!("Set to {}:{}", azimuth, elevation);
 
