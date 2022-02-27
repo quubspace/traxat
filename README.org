@@ -1,2 +1,24 @@
-* AST: Automated Satellite Tracker
-  Program to enable az/el control of the Quub tabletop satellite tracker.
+* ast: Automated Satellite Tracker
+ast is a program to enable control of the Quub tabletop satellite tracker,
+powered by rotctld, and fully compatible with GPredict.
+
+** Building
+ast is guaranteed to build on the Raspberry Pi 4B+ and the Raspberry Pi 3B+. It
+appears to build correctly on the M1 MacBook Pro as well, but all other
+platforms aren't directly supported.
+
+ast is written in Rust, so you will need to have a Rust installation in order to
+compile it. ast is guaranteed to compile with Rust 1.59.0 (stable) or newer, but
+older versions might work.
+
+To build ast:
+
+#+BEGIN_SRC shell
+$ git clone https://github.com/quubspace/automated-satellite-tracker
+$ cd automated-satellite-tracker
+$ cargo build --release
+#+END_SRC
+
+** Credits
+Initial prototypes of ast were inspired by PiTator by @M0JEC on GitHub. Thank
+you to everyone at Quub for your continued support as well.
