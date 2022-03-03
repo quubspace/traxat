@@ -30,21 +30,21 @@ impl Rotator {
         }
     }
 
-    pub fn mv(&self) {
+    pub fn mv(&mut self) {
         let old_xt = self.xt;
         let old_yt = self.yt;
 
-        if self.yt <= 20 {
-            self.yt = 20;
+        if self.yt <= 20 as f32 {
+            self.yt = 20 as f32;
         }
 
-        if self.yt >= 85 {
+        if self.yt >= 85 as f32 {
             debug!("Old x = {}", self.xt);
 
-            if self.xt >= 180 {
-                self.xt -= 90;
+            if self.xt >= 180 as f32 {
+                self.xt -= 90 as f32;
             } else {
-                self.xt += 90;
+                self.xt += 90 as f32;
             }
         }
 
@@ -52,18 +52,22 @@ impl Rotator {
         if self.xt >= self.az {
             // Testing for up position
             if self.yt >= self.ele {
+                info!("UR!");
                 self.ur();
             } else {
                 // If right position and not up, must be down and right
+                info!("DR!");
                 self.dr()
             }
         // Testing for left position
         } else if self.xt <= self.az {
             // Testing for up position
             if self.yt >= self.ele {
+                info!("UL!");
                 self.ul();
             } else {
                 // If left position and not up, must be down and left
+                info!("DL!");
                 self.dl();
             }
         }
@@ -72,17 +76,19 @@ impl Rotator {
         self.yt = old_yt;
     }
 
-    pub fn ul(&self) {
-        let yseconds = (self.yt - self.ele) * (1 / self.yc);
+    pub fn ul(&mut self) {
+        let yseconds = (self.yt - self.ele) * (1 as f32 / self.yc);
         info!("Y: Target {} degrees", self.yt);
         info!("Moving up for {} seconds", yseconds);
 
-        let xseconds = (self.az - self.xt) * (1 / self.xc);
+        let xseconds = (self.az - self.xt) * (1 as f32 / self.xc);
         info!("X: Target {} degrees", self.xt);
         info!("Moving left for {} seconds", xseconds);
 
         if xseconds > yseconds {
+            self.move_steppers();
         } else {
+            self.move_steppers();
         }
 
         self.ele = self.yt;
@@ -92,9 +98,49 @@ impl Rotator {
         info!("Azimuth is {}", self.az);
     }
 
-    pub fn ur(&self) {}
+    pub fn ur(&mut self) {
+        let yseconds = (self.yt - self.ele) * (1 as f32 / self.yc);
+        info!("Y: Target {} degrees", self.yt);
+        info!("Moving up for {} seconds", yseconds);
 
-    pub fn dl(&self) {}
+        let xseconds = (self.xt - self.az) * (1 as f32 / self.xc);
+        info!("X: Target {} degrees", self.xt);
+        info!("Moving left for {} seconds", xseconds);
+
+        if xseconds > yseconds {
+            self.move_steppers();
+        } else {
+            self.move_steppers();
+        }
+
+        self.ele = self.yt;
+        info!("Elevation is {}", self.ele);
+
+        self.az = self.xt;
+        info!("Azimuth is {}", self.az);
+    }
+
+    pub fn dl(&mut self) {
+        let yseconds = (self.ele - self.yt) * (1 as f32 / self.yc);
+        info!("Y: Target {} degrees", self.yt);
+        info!("Moving up for {} seconds", yseconds);
+
+        let xseconds = (self.az - self.xt) * (1 as f32 / self.xc);
+        info!("X: Target {} degrees", self.xt);
+        info!("Moving left for {} seconds", xseconds);
+
+        if xseconds > yseconds {
+            self.move_steppers();
+        } else {
+            self.move_steppers();
+        }
+
+        self.ele = self.yt;
+        info!("Elevation is {}", self.ele);
+
+        self.az = self.xt;
+        info!("Azimuth is {}", self.az);
+    }
 
     pub fn dr(&self) {}
 
@@ -104,17 +150,26 @@ impl Rotator {
 
     pub fn zero(&self) {}
 
-    fn move_steppers(&self, steppers: Vec<usize>) -> Result<()> {
+    fn move_steppers(&self) -> Result<()> {
         println!("Moving motor on a {}.", DeviceInfo::new()?.model());
 
         let mut chunked_pins = GPIO_PINS.chunks(4);
 
-        for steps in steppers {
+        for steps in 0..chunked_pins.len() {
             let pins_list = &chunked_pins.next().ok_or_else(|| {
                 anyhow!("No next stepper! Ensure you did not add an extra step number!")
             })?;
-            for x in 0..steps {
-                step_pins(x + 1, pins_list)?;
+
+            let mut counter = 0;
+
+            loop {
+                self.step_pins(pins_list)?;
+
+                if counter == 100 {
+                    break;
+                }
+
+                counter += 1;
             }
         }
 
@@ -123,7 +178,7 @@ impl Rotator {
         Ok(())
     }
 
-    fn step_pins(&self, step_num: usize, pins_list: &[u8]) -> Result<()> {
+    fn step_pins(&self, pins_list: &[u8]) -> Result<()> {
         let mut last = Gpio::new()?
             .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
             .into_output();
@@ -161,8 +216,6 @@ impl Rotator {
         thread::sleep(Duration::from_millis(1));
         last.set_low();
         first.set_low();
-
-        info!("Step number: {}", step_num);
 
         Ok(())
     }

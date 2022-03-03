@@ -17,3 +17,7 @@ fern = { version = "0.5", features = ["colored"] }
 chrono = { version = "0.4" }
 anyhow = { version = "1" }
 rppal = { version = "0.13" }
+
+[[bin]]
+name = "ast"
+path = "src/main.rs"
