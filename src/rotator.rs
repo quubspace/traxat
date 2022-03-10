@@ -8,7 +8,6 @@ use log::{debug, info, warn};
 
 const MOTOR_ELE_GPIO: [u8; 4] = [6, 13, 19, 26];
 const MOTOR_AZ_GPIO: [u8; 4] = [9, 11, 0, 5];
-const COMMAND_PULSE_RATE: u32 = 20;
 const STEPS_PER_ROT: u32 = 64;
 
 #[derive(Debug)]
