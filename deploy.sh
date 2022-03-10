@@ -7,7 +7,7 @@ set -o xtrace
 
 # Should only have to change these two
 readonly APP_NAME="ast"
-readonly TARGET_HOST="pi@10.10.0.65"
+readonly TARGET_HOST="quub-pi-remote"
 
 readonly TARGET_PATH="/home/pi/$APP_NAME"
 # Change depending on if running on 64-bit ARM (such as RPi 4 with Ubuntu)
