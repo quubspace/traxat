@@ -30,8 +30,8 @@ impl Rotator {
     }
 
     pub fn mv(&mut self) {
-        let ele_steps = (self.ele - self.ele_target) as i32 / (360 / STEPS_PER_ROT);
-        let az_steps = (self.az - self.az_target) as i32 / (360 / STEPS_PER_ROT);
+        let ele_steps = (self.ele - self.ele_target) as i32 / (360 / STEPS_PER_ROT) as i32;
+        let az_steps = (self.az - self.az_target) as i32 / (360 / STEPS_PER_ROT) as i32;
 
         // Move elevation stepper
         self.move_steppers(ele_steps, &MOTOR_ELE_GPIO);
