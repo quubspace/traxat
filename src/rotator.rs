@@ -30,8 +30,8 @@ impl Rotator {
     }
 
     pub fn mv(&mut self) {
-        let ele_steps = (self.ele - self.ele_target) as u32 / (360 / STEPS_PER_ROT);
-        let az_steps = (self.az - self.az_target) as u32 / (360 / STEPS_PER_ROT);
+        let ele_steps = (self.ele - self.ele_target) as i32 / (360 / STEPS_PER_ROT);
+        let az_steps = (self.az - self.az_target) as i32 / (360 / STEPS_PER_ROT);
 
         // Move elevation stepper
         self.move_steppers(ele_steps, &MOTOR_ELE_GPIO);
@@ -42,13 +42,10 @@ impl Rotator {
 
     pub fn zero(&self) {}
 
-    fn move_steppers(&self, steps: u32, gpio_pin_list: &[u8]) -> Result<()> {
+    fn move_steppers(&self, steps: i32, gpio_pin_list: &[u8]) -> Result<()> {
         info!("Moving motor on a {}.", DeviceInfo::new()?.model());
 
-        let mut abs_steps: u32 = steps;
-        abs_steps = abs_steps.abs();
-
-        for _ in 0..abs_steps {
+        for _ in 0..steps.abs() {
             if steps >= 0 {
                 self.step_pins_forward(gpio_pin_list)?;
             } else {
