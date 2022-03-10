@@ -45,7 +45,7 @@ impl Rotator {
     fn move_steppers(&self, steps: u32, gpio_pin_list: &[u8]) -> Result<()> {
         info!("Moving motor on a {}.", DeviceInfo::new()?.model());
 
-        for _ in 0..steps {
+        for _ in 0..steps.abs() {
             if steps >= 0 {
                 self.step_pins_forward(gpio_pin_list)?;
             } else {
