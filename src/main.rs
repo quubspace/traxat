@@ -78,7 +78,7 @@ fn init_logging() {
         .debug(Color::White)
         .trace(Color::BrightBlack);
 
-    let colors_level = colors_line.clone().info(Color::Green);
+    let colors_level = colors_line.info(Color::Green);
 
     Dispatch::new()
         .format(move |out, message, record| {

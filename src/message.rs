@@ -23,10 +23,7 @@ impl FromStr for Message {
 
         let (cmd, params) = res.split_first().unwrap();
 
-        let params: Vec<f32> = params
-            .into_iter()
-            .map(|x| x.parse::<f32>().unwrap())
-            .collect();
+        let params: Vec<f32> = params.iter().map(|x| x.parse::<f32>().unwrap()).collect();
 
         debug!("Command: {:?} - Parameters: {:?}", cmd, params);
 

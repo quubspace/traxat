@@ -21,10 +21,10 @@ pub struct Rotator {
 impl Rotator {
     pub fn new() -> Rotator {
         Rotator {
-            ele: 20 as f32,
-            az: 0 as f32,
-            ele_target: 20 as f32,
-            az_target: 0 as f32,
+            ele: 20_f32,
+            az: 0_f32,
+            ele_target: 20_f32,
+            az_target: 0_f32,
         }
     }
 
