@@ -25,7 +25,8 @@ fn main() -> Result<()> {
 
     let mut rotator = Rotator::new();
 
-    rotator.zero();
+    // Zero position
+    rotator.mv();
 
     let rotctld_port = "4533";
     let listener = TcpListener::bind(format!("0.0.0.0:{}", rotctld_port))?;

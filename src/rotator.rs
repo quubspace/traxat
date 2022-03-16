@@ -46,8 +46,6 @@ impl Rotator {
         Ok(())
     }
 
-    pub fn zero(&self) {}
-
     fn move_steppers(&self, steps: i32, gpio_pin_list: &[u8]) -> Result<()> {
         info!("Moving motor on a {}.", DeviceInfo::new()?.model());
 
