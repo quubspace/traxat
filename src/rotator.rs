@@ -33,10 +33,14 @@ impl Rotator {
         let az_steps = (self.az - self.az_target) as i32 / (360 / STEPS_PER_ROT) as i32;
 
         // Move elevation stepper
-        self.move_steppers(ele_steps, &MOTOR_ELE_GPIO)?;
+        if ele_steps != 0 {
+            self.move_steppers(ele_steps, &MOTOR_ELE_GPIO)?;
+        }
 
         // Move azimuth stepper
-        self.move_steppers(az_steps, &MOTOR_AZ_GPIO)?;
+        if az_steps != 0 {
+            self.move_steppers(az_steps, &MOTOR_AZ_GPIO)?;
+        }
 
         self.ele = self.ele_target;
         self.az = self.az_target;
