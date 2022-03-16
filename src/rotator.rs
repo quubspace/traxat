@@ -70,7 +70,7 @@ impl Rotator {
             .into_output();
 
         last.set_high();
-        thread::sleep(Duration::from_millis(1));
+        thread::sleep(Duration::from_millis(10));
         last.set_low();
 
         drop(last);
@@ -81,12 +81,12 @@ impl Rotator {
 
             last.set_high();
             cur.set_high();
-            thread::sleep(Duration::from_millis(1));
+            thread::sleep(Duration::from_millis(10));
             last.set_low();
             cur.set_low();
 
             cur.set_high();
-            thread::sleep(Duration::from_millis(1));
+            thread::sleep(Duration::from_millis(10));
             cur.set_low();
         }
 
@@ -99,7 +99,7 @@ impl Rotator {
 
         last.set_high();
         first.set_high();
-        thread::sleep(Duration::from_millis(1));
+        thread::sleep(Duration::from_millis(10));
         last.set_low();
         first.set_low();
 
@@ -112,7 +112,7 @@ impl Rotator {
             .into_output();
 
         last.set_high();
-        thread::sleep(Duration::from_millis(1));
+        thread::sleep(Duration::from_millis(10));
         last.set_low();
 
         drop(last);
@@ -123,12 +123,12 @@ impl Rotator {
 
             cur.set_high();
             last.set_high();
-            thread::sleep(Duration::from_millis(1));
+            thread::sleep(Duration::from_millis(10));
             cur.set_low();
             last.set_low();
 
             last.set_high();
-            thread::sleep(Duration::from_millis(1));
+            thread::sleep(Duration::from_millis(10));
             last.set_low();
         }
 
@@ -141,7 +141,7 @@ impl Rotator {
 
         first.set_high();
         last.set_high();
-        thread::sleep(Duration::from_millis(1));
+        thread::sleep(Duration::from_millis(10));
         first.set_low();
         last.set_low();
 
