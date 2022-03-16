@@ -46,6 +46,15 @@ impl Rotator {
         Ok(())
     }
 
+    pub fn zero(&mut self) -> Result<()> {
+        self.ele_target = 20_f32;
+        self.az_target = 0_f32;
+
+        self.mv()?;
+
+        Ok(())
+    }
+
     fn move_steppers(&self, steps: i32, gpio_pin_list: &[u8]) -> Result<()> {
         info!("Moving motor on a {}.", DeviceInfo::new()?.model());
 

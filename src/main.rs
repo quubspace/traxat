@@ -26,7 +26,7 @@ fn main() -> Result<()> {
     let mut rotator = Rotator::new();
 
     // Zero position
-    rotator.mv()?;
+    rotator.zero()?;
 
     let rotctld_port = "4533";
     let listener = TcpListener::bind(format!("0.0.0.0:{}", rotctld_port))?;
@@ -56,6 +56,7 @@ fn main() -> Result<()> {
 
             if ret == "rotctld_quit" {
                 warn!("Closing connection, rotctld sent quit!");
+                rotator.zero()?;
                 break;
             }
 
