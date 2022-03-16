@@ -1,6 +1,5 @@
-use std::process;
-
-use log::{debug, info, warn};
+use anyhow::Result;
+use log::info;
 
 use crate::message::Message;
 use crate::rotator::Rotator;
@@ -15,27 +14,27 @@ impl<'a> ActionHandler<'a> {
         Self { rotator }
     }
 
-    pub fn handle_p_set(&mut self, azimuth: f32, elevation: f32) -> String {
+    pub fn handle_p_set(&mut self, azimuth: f32, elevation: f32) -> Result<String> {
         self.rotator.az_target = azimuth;
         self.rotator.ele_target = elevation;
 
         info!("Set to {}:{}", azimuth, elevation);
 
-        self.rotator.mv();
+        self.rotator.mv()?;
 
-        String::from("\n")
+        Ok(String::from("\n"))
     }
 
     pub fn handle_p_get(&self) -> String {
         format!("{}\n{}", self.rotator.az, self.rotator.ele)
     }
 
-    pub fn handle_message(&mut self, msg: Message) -> String {
+    pub fn handle_message(&mut self, msg: Message) -> Result<String> {
         match msg {
             Message::PSet(az, ele) => self.handle_p_set(az, ele),
-            Message::PGet => self.handle_p_get(),
-            Message::Close => String::from("rotctld_quit"),
-            _ => String::from("Not a command!"),
+            Message::PGet => Ok(self.handle_p_get()),
+            Message::Close => Ok(String::from("rotctld_quit")),
+            _ => Ok(String::from("Not a command!")),
         }
     }
 }

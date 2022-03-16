@@ -4,7 +4,7 @@ use anyhow::{anyhow, Result};
 
 use std::{thread, time::Duration};
 
-use log::{debug, info, warn};
+use log::info;
 
 const MOTOR_ELE_GPIO: [u8; 4] = [6, 13, 19, 26];
 const MOTOR_AZ_GPIO: [u8; 4] = [9, 11, 0, 5];
@@ -28,20 +28,22 @@ impl Rotator {
         }
     }
 
-    pub fn mv(&mut self) {
+    pub fn mv(&mut self) -> Result<()> {
         let ele_steps = (self.ele - self.ele_target) as i32 / (360 / STEPS_PER_ROT) as i32;
         let az_steps = (self.az - self.az_target) as i32 / (360 / STEPS_PER_ROT) as i32;
 
         // Move elevation stepper
-        self.move_steppers(ele_steps, &MOTOR_ELE_GPIO);
+        self.move_steppers(ele_steps, &MOTOR_ELE_GPIO)?;
 
         // Move azimuth stepper
-        self.move_steppers(az_steps, &MOTOR_AZ_GPIO);
+        self.move_steppers(az_steps, &MOTOR_AZ_GPIO)?;
 
         self.ele = self.ele_target;
         self.az = self.az_target;
 
         info!("Elevation is {}, Azimuth is {}.", self.ele, self.az);
+
+        Ok(())
     }
 
     pub fn zero(&self) {}

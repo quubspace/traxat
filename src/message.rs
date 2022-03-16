@@ -5,7 +5,7 @@ use std::{
 
 use anyhow::Result;
 
-use log::{debug, info, warn};
+use log::debug;
 
 #[derive(Debug)]
 pub enum Message {
