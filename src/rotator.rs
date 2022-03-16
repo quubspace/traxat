@@ -37,6 +37,11 @@ impl Rotator {
 
         // Move azimuth stepper
         self.move_steppers(az_steps, &MOTOR_AZ_GPIO);
+
+        self.ele = self.ele_target;
+        self.az = self.az_target;
+
+        info!("Elevation is {}, Azimuth is {}.", self.ele, self.az);
     }
 
     pub fn zero(&self) {}
