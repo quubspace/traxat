@@ -19,6 +19,24 @@ $ cd automated-satellite-tracker
 $ cargo build --release
 #+END_SRC
 
+To run manual step tests, make use of the following bash function:
+
+#+BEGIN_SRC shell
+function m ()
+{
+local sentSteps=${1:-0}
+[[ -z my_count]] && my_count=0
+if [[ $sentSteps == "d" ]];then
+	my_count=0
+	echo "counted steps cleared"
+	return
+fi
+echo "s $sentSteps" | nc -w 1 127.0.0.1 4533 > /dev/null
+[ "$sentSteps" -eq "$sentSteps" ] && (( my_count += sentSteps ))
+echo "steps: $my_count"
+}
+#+END_SRC
+
 ** Credits
 Initial prototypes of ast were inspired by PiTator by @M0JEC on GitHub. Thank
 you to everyone at Quub for your continued support as well.
