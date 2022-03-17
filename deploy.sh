@@ -9,21 +9,15 @@ picker=${1:-"default"}
 flag_rsync=t
 
 while :; do
-	case $picker in
-	-c)
+	case "${picker}" in
+	-l | --local)
 		flag_rsync=f
-		shift
 		break
 		;;
-	--) # End of all options.
-		shift
-		break
-	;;
-	*) # Default case: No more options, so break out of the loop.
+	*)
 		break
 	;;
 	esac
-	shift
 done
 
 # Should only have to change these two
@@ -57,11 +51,11 @@ fi
 
 cross build --target aarch64-unknown-linux-musl --release
 
-[[ $flag_rsync == t ]] && rsync -r "${SOURCE_PATH}/target/${TARGET_ARCH}/release/ast" ${TARGET_HOST}:${TARGET_PATH}
+[[ ${flag_rsync} == "t" ]] && rsync -r "${SOURCE_PATH}/target/${TARGET_ARCH}/release/ast" ${TARGET_HOST}:${TARGET_PATH}
 
-[[ $flag_rsync == t ]] && echo "Upload successful!"
+[[ ${flag_rsync} == "t" ]] && echo "Upload successful!"
 
 # This is a bit janky, but essentially kill the service if it exists, otherwise
 # don't worry, and keep deploying.
 # ssh $TARGET_HOST "kill \$(lsof -t -i:4533) &> /dev/null"
-[[ $flag_rsync == t ]] && TERM="xterm" ssh $TARGET_HOST "kill \$(lsof -t -i:4533) &> /dev/null || true && $TARGET_PATH"
+[[ ${flag_rsync} == "t" ]] && TERM="xterm" ssh $TARGET_HOST "kill \$(lsof -t -i:4533) &> /dev/null || true && $TARGET_PATH"
