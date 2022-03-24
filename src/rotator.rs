@@ -78,7 +78,7 @@ impl Rotator {
 
     pub fn test_steppers(&self) -> Result<()> {
         let cur_steps = self.num_steps;
-        info!("moving motor {} steps", cur_steps);
+        info!("Moving motor {} steps", cur_steps);
         self.test_move_steppers(cur_steps, &MOTOR_ELE_GPIO)?;
 
         Ok(())

@@ -31,7 +31,7 @@ fn main() -> Result<()> {
     let rotctld_port = "4533";
     let listener = TcpListener::bind(format!("0.0.0.0:{}", rotctld_port))?;
 
-    // info!("AST is now ready to connect to rotctld.");
+    info!("AST is now ready to connect to rotctld.");
 
     for stream in listener.incoming() {
         let mut stream = stream?;
@@ -48,7 +48,7 @@ fn main() -> Result<()> {
             };
 
             let response = str::from_utf8(&buf[0..n]).unwrap();
-            // debug!("Response from rotctld: {:?}", response);
+            debug!("Response from rotctld: {:?}", response);
 
             // This will never actually error, since it returns Infallible
             let ret: String = ActionHandler::new(&mut rotator)
@@ -60,7 +60,7 @@ fn main() -> Result<()> {
                 break;
             }
 
-            // debug!("Send to rotctld: {:?}", ret);
+            debug!("Send to rotctld: {:?}", ret);
 
             if let Err(e) = stream.write_all(&buf[0..n]) {
                 warn!("failed to write to stream; err = {:?}", e);
