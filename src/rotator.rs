@@ -90,7 +90,7 @@ impl Rotator {
 
         for _ in 0..abs_steps {
             if steps >= 0 {
-                self.test_step_pins_forward(gpio_pin_list)?;
+                self.step_pins_forward(gpio_pin_list)?;
             } else {
                 self.step_pins_backward(gpio_pin_list)?;
             }
