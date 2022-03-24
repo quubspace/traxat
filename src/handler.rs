@@ -29,9 +29,9 @@ impl<'a> ActionHandler<'a> {
         format!("{}\n{}", self.rotator.az, self.rotator.ele)
     }
 
-    pub fn handle_step_test(&mut self, quickrotsteps: f32) -> Result<String> {
-        self.rotator.numsteps = quickrotsteps;
-        info!("Sending {} steps...", quickrotsteps);
+    pub fn handle_step_test(&mut self, quick_rot_steps: f32) -> Result<String> {
+        self.rotator.num_steps = quick_rot_steps;
+        info!("Sending {} steps...", quick_rot_steps);
 
         self.rotator.test_steppers()?;
 
