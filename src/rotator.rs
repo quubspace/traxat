@@ -6,7 +6,7 @@ use std::{thread, time::Duration};
 
 use log::info;
 
-// Pin map for Arduino testing - NDE
+// Pin map
 // 6 => ELE1 A
 // 13 => ELE2 B
 // 19 => ELE3 A_
@@ -27,7 +27,7 @@ pub struct Rotator {
     pub az: f32,         // Azimuth
     pub ele_target: f32, // Y axis target position
     pub az_target: f32,  // X axis target position
-    pub numsteps: f32,   // quicknumsteps to go
+    pub num_steps: i32,  // Number of steps to go
 }
 
 impl Rotator {
@@ -37,7 +37,7 @@ impl Rotator {
             az: 0_f32,
             ele_target: 20_f32,
             az_target: 0_f32,
-            numsteps: 0_f32,
+            num_steps: 0_f32,
         }
     }
 
@@ -77,7 +77,7 @@ impl Rotator {
     }
 
     pub fn test_steppers(&self) -> Result<()> {
-        let cur_steps = self.numsteps as i32;
+        let cur_steps = self.num_steps;
         info!("moving motor {} steps", cur_steps);
         self.test_move_steppers(cur_steps, &MOTOR_ELE_GPIO)?;
 
@@ -107,9 +107,9 @@ impl Rotator {
 
         for _ in 0..abs_steps {
             if steps >= 0.0 {
-                self.test_step_pins_forward(gpio_pin_list)?;
+                self.step_pins_forward(gpio_pin_list)?;
             } else {
-                self.test_step_pins_backward(gpio_pin_list)?;
+                self.step_pins_backward(gpio_pin_list)?;
             }
         }
 
@@ -118,185 +118,95 @@ impl Rotator {
         Ok(())
     }
 
-    fn test_step_pins_forward(&self, pins_list: &[u8]) -> Result<()> {
-        // let mut last = Gpio::new()?
-        //     .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
-        //     .into_output();
-        let delay_set = 2;
-
-        let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
-        let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
-        let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
-        let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
-
-        // full-step sequence
-        // step 1
-        a1.set_high();
-        b1.set_low();
-        a2.set_low();
-        b2.set_high();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // step 2
-        a1.set_high();
-        b1.set_high();
-        a2.set_low();
-        b2.set_low();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // step 3
-        a1.set_low();
-        b1.set_high();
-        a2.set_high();
-        b2.set_low();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // step 4
-        a1.set_low();
-        b1.set_low();
-        a2.set_high();
-        b2.set_high();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // motor off
-        a1.set_low();
-        b1.set_low();
-        a2.set_low();
-        b2.set_low();
-
-        Ok(())
-    }
-
-    fn test_step_pins_backward(&self, pins_list: &[u8]) -> Result<()> {
-        // let mut last = Gpio::new()?
-        //     .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
-        //     .into_output();
-        let delay_set = 2;
-
-        let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
-        let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
-        let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
-        let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
-
-        // full-step sequence
-
-        // step 4
-        a1.set_low();
-        b1.set_low();
-        a2.set_high();
-        b2.set_high();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // step 3
-        a1.set_low();
-        b1.set_high();
-        a2.set_high();
-        b2.set_low();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // step 2
-        a1.set_high();
-        b1.set_high();
-        a2.set_low();
-        b2.set_low();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // step 1
-        a1.set_high();
-        b1.set_low();
-        a2.set_low();
-        b2.set_high();
-        thread::sleep(Duration::from_millis(delay_set));
-
-        // motor off
-        a1.set_low();
-        b1.set_low();
-        a2.set_low();
-        b2.set_low();
-
-        Ok(())
-    }
-
     fn step_pins_forward(&self, pins_list: &[u8]) -> Result<()> {
-        let mut last = Gpio::new()?
-            .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
-            .into_output();
+        let delay_set = 2;
 
-        last.set_high();
-        thread::sleep(Duration::from_millis(10));
-        last.set_low();
+        let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
+        let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
+        let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
+        let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
 
-        drop(last);
+        // Full-step sequence
+        // Quarter-step 1
+        a1.set_high();
+        b1.set_low();
+        a2.set_low();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
 
-        for pair in pins_list.windows(2) {
-            let mut last = Gpio::new()?.get(pair[0])?.into_output();
-            let mut cur = Gpio::new()?.get(pair[1])?.into_output();
+        // Quarter-step 2
+        a1.set_high();
+        b1.set_high();
+        a2.set_low();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
 
-            last.set_high();
-            cur.set_high();
-            thread::sleep(Duration::from_millis(10));
-            last.set_low();
-            cur.set_low();
+        // Quarter-step 3
+        a1.set_low();
+        b1.set_high();
+        a2.set_high();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
 
-            cur.set_high();
-            thread::sleep(Duration::from_millis(10));
-            cur.set_low();
-        }
+        // Quarter-step 4
+        a1.set_low();
+        b1.set_low();
+        a2.set_high();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
 
-        let mut first = Gpio::new()?
-            .get(*pins_list.first().ok_or_else(|| anyhow!("No first pin!"))?)?
-            .into_output();
-        let mut last = Gpio::new()?
-            .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
-            .into_output();
-
-        last.set_high();
-        first.set_high();
-        thread::sleep(Duration::from_millis(10));
-        last.set_low();
-        first.set_low();
+        // Motor off
+        a1.set_low();
+        b1.set_low();
+        a2.set_low();
+        b2.set_low();
 
         Ok(())
     }
 
     fn step_pins_backward(&self, pins_list: &[u8]) -> Result<()> {
-        let mut last = Gpio::new()?
-            .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
-            .into_output();
+        let delay_set = 2;
 
-        last.set_high();
-        thread::sleep(Duration::from_millis(10));
-        last.set_low();
+        let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
+        let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
+        let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
+        let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
 
-        drop(last);
+        // Full-step sequence
 
-        for pair in pins_list.windows(2) {
-            let mut last = Gpio::new()?.get(pair[0])?.into_output();
-            let mut cur = Gpio::new()?.get(pair[1])?.into_output();
+        // Step 4
+        a1.set_low();
+        b1.set_low();
+        a2.set_high();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
 
-            cur.set_high();
-            last.set_high();
-            thread::sleep(Duration::from_millis(10));
-            cur.set_low();
-            last.set_low();
+        // Step 3
+        a1.set_low();
+        b1.set_high();
+        a2.set_high();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
 
-            last.set_high();
-            thread::sleep(Duration::from_millis(10));
-            last.set_low();
-        }
+        // Step 2
+        a1.set_high();
+        b1.set_high();
+        a2.set_low();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
 
-        let mut first = Gpio::new()?
-            .get(*pins_list.first().ok_or_else(|| anyhow!("No first pin!"))?)?
-            .into_output();
-        let mut last = Gpio::new()?
-            .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
-            .into_output();
+        // Step 1
+        a1.set_high();
+        b1.set_low();
+        a2.set_low();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
 
-        first.set_high();
-        last.set_high();
-        thread::sleep(Duration::from_millis(10));
-        first.set_low();
-        last.set_low();
+        // Motor off
+        a1.set_low();
+        b1.set_low();
+        a2.set_low();
+        b2.set_low();
 
         Ok(())
     }

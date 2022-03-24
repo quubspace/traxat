@@ -42,7 +42,7 @@ impl<'a> ActionHandler<'a> {
         match msg {
             Message::PSet(az, ele) => self.handle_p_set(az, ele),
             Message::PGet => Ok(self.handle_p_get()),
-            Message::StepTest(seps) => self.handle_step_test(seps),
+            Message::StepTest(steps) => self.handle_step_test(steps),
             Message::Close => Ok(String::from("rotctld_quit")),
             _ => Ok(String::from("Not a command!")),
         }
