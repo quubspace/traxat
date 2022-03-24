@@ -27,7 +27,7 @@ pub struct Rotator {
     pub az: f32,         // Azimuth
     pub ele_target: f32, // Y axis target position
     pub az_target: f32,  // X axis target position
-    pub numsteps: f32,  // quicknumsteps to go
+    pub numsteps: f32,   // quicknumsteps to go
 }
 
 impl Rotator {
@@ -37,17 +37,17 @@ impl Rotator {
             az: 0_f32,
             ele_target: 20_f32,
             az_target: 0_f32,
-			numsteps: 0_f32
+            numsteps: 0_f32,
         }
     }
 
     pub fn mv(&mut self) -> Result<()> {
-		let steps_per_degree = (STEPS_PER_ROT / 360.0) as f32;
+        let steps_per_degree = (STEPS_PER_ROT / 360.0) as f32;
         let ele_steps = (self.ele_target - self.ele) * steps_per_degree as f32;
-		let az_steps = (self.az_target - self.az) * steps_per_degree as f32;
-        info!("--- ele_steps is {}.", ele_steps);
-        info!("--- az_steps is {}.", az_steps);
-        info!("--- steps_per_degree is {}.", steps_per_degree);
+        let az_steps = (self.az_target - self.az) * steps_per_degree as f32;
+        info!("ele_steps is {}.", ele_steps);
+        info!("az_steps is {}.", az_steps);
+        info!("steps_per_degree is {}.", steps_per_degree);
 
         // Move elevation stepper
         if ele_steps != 0.0 {
@@ -76,17 +76,17 @@ impl Rotator {
         Ok(())
     }
 
-	pub fn test_steppers(&self) -> Result<()> {
-		let cur_steps = self.numsteps as i32;
-		info!("moving motor {} steps", cur_steps);
-		self.test_move_steppers(cur_steps, &MOTOR_ELE_GPIO)?;
+    pub fn test_steppers(&self) -> Result<()> {
+        let cur_steps = self.numsteps as i32;
+        info!("moving motor {} steps", cur_steps);
+        self.test_move_steppers(cur_steps, &MOTOR_ELE_GPIO)?;
 
-		Ok(())
-	}
-	
-	fn test_move_steppers(&self, steps: i32, gpio_pin_list: &[u8]) -> Result<()> {
+        Ok(())
+    }
+
+    fn test_move_steppers(&self, steps: i32, gpio_pin_list: &[u8]) -> Result<()> {
         let abs_steps = steps.abs();
-		info!("Moving motor on a {}.", DeviceInfo::new()?.model());
+        info!("Moving motor on a {}.", DeviceInfo::new()?.model());
 
         for _ in 0..abs_steps {
             if steps >= 0 {
@@ -103,7 +103,7 @@ impl Rotator {
 
     fn move_steppers(&self, steps: f32, gpio_pin_list: &[u8]) -> Result<()> {
         info!("Moving motor on a {}.", DeviceInfo::new()?.model());
-		let abs_steps = steps.abs().floor() as i32;
+        let abs_steps = steps.abs().floor() as i32;
 
         for _ in 0..abs_steps {
             if steps >= 0.0 {
@@ -118,102 +118,101 @@ impl Rotator {
         Ok(())
     }
 
-	fn test_step_pins_forward(&self, pins_list: &[u8]) -> Result<()> {
+    fn test_step_pins_forward(&self, pins_list: &[u8]) -> Result<()> {
         // let mut last = Gpio::new()?
         //     .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
         //     .into_output();
-		let delay_set = 2;
+        let delay_set = 2;
 
-		let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
-		let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
-		let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
-		let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
+        let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
+        let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
+        let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
+        let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
 
-		// full-step sequence
-		// step 1
-		a1.set_high();
-		b1.set_low();
-		a2.set_low();
-		b2.set_high();
-		thread::sleep(Duration::from_millis(delay_set));
+        // full-step sequence
+        // step 1
+        a1.set_high();
+        b1.set_low();
+        a2.set_low();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
 
-		// step 2
-		a1.set_high();
-		b1.set_high();
-		a2.set_low();
-		b2.set_low();
-		thread::sleep(Duration::from_millis(delay_set));
+        // step 2
+        a1.set_high();
+        b1.set_high();
+        a2.set_low();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
 
-		// step 3
-		a1.set_low();
-		b1.set_high();
-		a2.set_high();
-		b2.set_low();
-		thread::sleep(Duration::from_millis(delay_set));
+        // step 3
+        a1.set_low();
+        b1.set_high();
+        a2.set_high();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
 
-		// step 4
-		a1.set_low();
-		b1.set_low();
-		a2.set_high();
-		b2.set_high();
-		thread::sleep(Duration::from_millis(delay_set));
+        // step 4
+        a1.set_low();
+        b1.set_low();
+        a2.set_high();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
 
-		// motor off
-		a1.set_low();
-		b1.set_low();
-		a2.set_low();
-		b2.set_low();
+        // motor off
+        a1.set_low();
+        b1.set_low();
+        a2.set_low();
+        b2.set_low();
 
         Ok(())
     }
 
-
-	fn test_step_pins_backward(&self, pins_list: &[u8]) -> Result<()> {
+    fn test_step_pins_backward(&self, pins_list: &[u8]) -> Result<()> {
         // let mut last = Gpio::new()?
         //     .get(*pins_list.last().ok_or_else(|| anyhow!("No last pin!"))?)?
         //     .into_output();
-		let delay_set = 2;
+        let delay_set = 2;
 
-		let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
-		let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
-		let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
-		let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
+        let mut a1 = Gpio::new()?.get(pins_list[0])?.into_output();
+        let mut b1 = Gpio::new()?.get(pins_list[1])?.into_output();
+        let mut a2 = Gpio::new()?.get(pins_list[2])?.into_output();
+        let mut b2 = Gpio::new()?.get(pins_list[3])?.into_output();
 
-		// full-step sequence
+        // full-step sequence
 
-		// step 4
-		a1.set_low();
-		b1.set_low();
-		a2.set_high();
-		b2.set_high();
-		thread::sleep(Duration::from_millis(delay_set));
-		
-		// step 3
-		a1.set_low();
-		b1.set_high();
-		a2.set_high();
-		b2.set_low();
-		thread::sleep(Duration::from_millis(delay_set));
+        // step 4
+        a1.set_low();
+        b1.set_low();
+        a2.set_high();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
 
-		// step 2
-		a1.set_high();
-		b1.set_high();
-		a2.set_low();
-		b2.set_low();
-		thread::sleep(Duration::from_millis(delay_set));
-		
-		// step 1
-		a1.set_high();
-		b1.set_low();
-		a2.set_low();
-		b2.set_high();
-		thread::sleep(Duration::from_millis(delay_set));
+        // step 3
+        a1.set_low();
+        b1.set_high();
+        a2.set_high();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
 
-		// motor off
-		a1.set_low();
-		b1.set_low();
-		a2.set_low();
-		b2.set_low();
+        // step 2
+        a1.set_high();
+        b1.set_high();
+        a2.set_low();
+        b2.set_low();
+        thread::sleep(Duration::from_millis(delay_set));
+
+        // step 1
+        a1.set_high();
+        b1.set_low();
+        a2.set_low();
+        b2.set_high();
+        thread::sleep(Duration::from_millis(delay_set));
+
+        // motor off
+        a1.set_low();
+        b1.set_low();
+        a2.set_low();
+        b2.set_low();
 
         Ok(())
     }
