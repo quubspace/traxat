@@ -1,6 +1,6 @@
 use rppal::{gpio::Gpio, system::DeviceInfo};
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 
 use std::{thread, time::Duration};
 
@@ -37,7 +37,7 @@ impl Rotator {
             az: 0_f32,
             ele_target: 20_f32,
             az_target: 0_f32,
-            num_steps: 0_f32,
+            num_steps: 0_i32,
         }
     }
 
