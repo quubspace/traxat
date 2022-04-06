@@ -5,6 +5,21 @@ set -o nounset
 set -o pipefail
 set -o xtrace
 
+picker=${1:-"default"}
+flag_rsync=t
+
+while :; do
+	case "${picker}" in
+	-l | --local)
+		flag_rsync=f
+		break
+		;;
+	*)
+		break
+	;;
+	esac
+done
+
 # Should only have to change these two
 readonly APP_NAME="ast"
 readonly TARGET_HOST="quub-pi-remote"
@@ -36,10 +51,11 @@ fi
 
 cross build --target aarch64-unknown-linux-musl --release
 
-rsync -r "${SOURCE_PATH}/target/${TARGET_ARCH}/release/ast" ${TARGET_HOST}:${TARGET_PATH}
+[[ ${flag_rsync} == "t" ]] && rsync -r "${SOURCE_PATH}/target/${TARGET_ARCH}/release/ast" ${TARGET_HOST}:${TARGET_PATH}
 
-echo "Upload successful!"
+[[ ${flag_rsync} == "t" ]] && echo "Upload successful!"
 
 # This is a bit janky, but essentially kill the service if it exists, otherwise
 # don't worry, and keep deploying.
-TERM="xterm" ssh $TARGET_HOST "kill \$(lsof -t -i:4533) &> /dev/null || true && $TARGET_PATH"
+# ssh $TARGET_HOST "kill \$(lsof -t -i:4533) &> /dev/null"
+[[ ${flag_rsync} == "t" ]] && TERM="xterm" ssh $TARGET_HOST "kill \$(lsof -t -i:4533) &> /dev/null || true && $TARGET_PATH"
