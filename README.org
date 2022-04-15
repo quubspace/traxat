@@ -23,8 +23,9 @@ Traxat utilises hamlib and rotctld to enable wide compatibility with a wide
 variety of programs.
 
 ** Building
-Traxat is guaranteed to build on the Raspberry Pi 4B+ and the Raspberry Pi 3B+. It
-appears to build correctly on the M1 MacBook Pro as well, but all other
+*** Software
+Traxat is guaranteed to build on the Raspberry Pi 4B+ and on the Raspberry Pi
+3B+. It appears to build correctly on the M1 MacBook Pro as well, but all other
 platforms aren't directly supported.
 
 Traxat is written in Rust, so you will need to have a Rust installation in order to
@@ -35,9 +36,32 @@ To build Traxat:
 
 #+BEGIN_SRC shell
 $ git clone https://github.com/quubspace/traxat
-$ cd traxat
+$ cd traxat/software
 $ cargo build --release
 #+END_SRC
+
+Once finished, you can try running Traxat:
+
+#+BEGIN_SRC shell
+$ ./target/release/traxat
+#+END_SRC
+
+In order to use Traxat on system start, copy the service file as root and enable the ~systemd~ service:
+
+#+BEGIN_SRC shell
+# TODO: Write the systemd unit
+$ sudo cp traxat.service /etc/systemd/system/
+$ sudo systemctl enable --now traxat
+#+END_SRC
+
+A static IP is recommended for the Raspberry Pi so that your tracking program
+can consistently connect to the unit.
+
+*** Hardware
+The Traxat unit consists of 3D-printed parts, zip-ties, stepper motors, and a
+Raspberry Pi unit (preferably a Pi 4B+ for optimal performance).
+
+The STLs for the 3D-printed parts are included in ~/hardware~.
 
 ** Testing
 
