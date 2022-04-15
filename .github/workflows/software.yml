@@ -4,7 +4,7 @@ name: Software
 
 defaults:
   run:
-    working-directory: software
+    working-directory: ./software
 
 jobs:
   check:
