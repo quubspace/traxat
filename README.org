@@ -1,4 +1,21 @@
-* Traxat
+#+BEGIN_EXPORT html
+<div id="traxat-logo" align="center">
+    <br />
+    <img src="images/logo.svg" alt="Traxat Logo" width="150" height="150"/>
+    <h1>Traxat</h1>
+    <h3>Open Source Tabletop Satellite Tracker</h3>
+</div>
+
+<div id="badges" align="center">
+
+  <a href="https://github.com/quubspace/traxat/actions/workflows/software.yml">
+    <img src="https://github.com/quubspace/traxat/actions/workflows/software.yml/badge.svg?branch=main" alt="GitHub Workflow Status"/>
+  </a>
+
+</div>
+#+END_EXPORT
+
+** About
 The Traxat project is an open-source and open hardware tabletop satellite tracker.
 This repository contains the Rust code for the firmware, the CAD models, and
 instructions for constructing your own Traxat. Fully compatible with GPredict,
