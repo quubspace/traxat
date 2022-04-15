@@ -12,15 +12,17 @@ platforms aren't directly supported.
 
 Traxat is written in Rust, so you will need to have a Rust installation in order to
 compile it. Traxat is guaranteed to compile with Rust 1.59.0 (stable) or newer, but
-older versions might work.
+older versions may also work.
 
 To build Traxat:
 
 #+BEGIN_SRC shell
-$ git clone https://github.com/quubspace/automated-satellite-tracker
-$ cd automated-satellite-tracker
+$ git clone https://github.com/quubspace/traxat
+$ cd traxat
 $ cargo build --release
 #+END_SRC
+
+** Testing
 
 To run manual step tests, make use of the following bash function:
 
