@@ -1,4 +1,4 @@
-#+BEGIN_EXPORT html
+#+BEGIN_HTML
 <div id="traxat-logo" align="center">
     <br />
     <img src="images/logo.svg" alt="Traxat Logo" width="150" height="150"/>
@@ -13,7 +13,7 @@
   </a>
 
 </div>
-#+END_EXPORT
+#+END_HTML
 
 ** About
 The Traxat project is an open-source and open hardware tabletop satellite tracker.
