@@ -24,6 +24,23 @@ variety of programs.
 
 ** Building
 *** Software
+**** Cargo
+#+BEGIN_QUOTE
+        TODO: Add to crates.io
+#+END_QUOTE
+
+The easiest way to get Traxat is to download it from ~crates.io~. Using ~cargo~,
+you can simply run:
+
+#+BEGIN_SRC shell
+$ cargo install traxat
+#+END_SRC
+
+With this method, you do not get the ~systemd~ unit file. You can simply copy it
+from the repository, or clone the repository to obtain it. If you'd like to
+build Traxat yourself, continue below.
+
+**** Manually
 Traxat is guaranteed to build on the Raspberry Pi 4B+ and on the Raspberry Pi
 3B+. It appears to build correctly on the M1 MacBook Pro as well, but all other
 platforms aren't directly supported.
