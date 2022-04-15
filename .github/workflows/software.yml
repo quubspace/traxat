@@ -4,7 +4,7 @@ name: Software
 
 defaults:
   run:
-    working-directory: ./software
+    working-directory: ./traxat/software
 
 jobs:
   check:
