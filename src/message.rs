@@ -8,17 +8,29 @@ use anyhow::Result;
 use log::debug;
 
 #[derive(Debug)]
+
+/// A message being represented here.
 pub enum Message {
+    /// Pin set function
     PSet(f32, f32),
+    /// Gets ???
     PGet,
+    /// Step test funcion.
     StepTest(i32),
+    /// Close message to stop communication.
     Close,
+    /// Failed to get a command.
     NotACommand,
 }
 
 impl FromStr for Message {
+    /// Returns a message object from a string.
+    ///
+    /// # Arguments
+    ///
+    /// * `response` - A message in the form of a string.
+    ///
     type Err = Infallible;
-
     fn from_str(response: &str) -> Result<Message, Infallible> {
         let res: Vec<String> = response.split_whitespace().map(|s| s.to_string()).collect();
 
