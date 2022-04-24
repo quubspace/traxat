@@ -1,11 +1,11 @@
 [package]
-name = "automated-satellite-tracker"
+name = "traxat"
 version = "0.1.0"
-authors = ["Daniil Rose <daniil.rose@member.fsf.org>", "Quub, LLC <info@quub.space>"]
-description = "Program to enable az/el control of the Quub tabletop satellite tracker."
+authors = ["Daniil Rose <daniil.rose@posteo.org>", "Quub, LLC <info@quub.space>"]
+description = "Program to control the Traxat tabletop satellite tracker."
 edition = "2021"
-homepage = "https://github.com/quubspace/automated-satellite-tracker"
-repository = "https://github.com/quubspace/automated-satellite-tracker"
+homepage = "https://github.com/quubspace/traxat"
+repository = "https://github.com/quubspace/traxat"
 license = "BSD 3"
 keywords = ["robotics", "embedded"]
 categories = ["embedded"]
@@ -19,5 +19,5 @@ anyhow = { version = "1" }
 rppal = { version = "0.13" }
 
 [[bin]]
-name = "ast"
+name = "traxat"
 path = "src/main.rs"
