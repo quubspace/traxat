@@ -36,19 +36,22 @@ To build Traxat:
 
 #+BEGIN_SRC shell
 $ git clone https://github.com/quubspace/traxat
-$ cd traxat/software
+$ cd traxat/software # To move into the software directory
 $ cargo build --release
 #+END_SRC
 
 Once finished, you can try running Traxat:
 
 #+BEGIN_SRC shell
-$ ./target/release/traxat
+$ cd ../ # So we are in the root of the project
+$ ./software/target/release/traxat
 #+END_SRC
 
-In order to use Traxat on system start, copy the service file as root and enable the ~systemd~ service:
+In order to use Traxat on system start, copy the service file and binary as root and enable the ~systemd~ service:
 
 #+BEGIN_SRC shell
+$ sudo cp ./software/target/release/traxat /usr/bin
+$ sudo chmod a+x /usr/bin/traxat # So the program is executable
 $ sudo cp traxat.service /etc/systemd/system/
 $ sudo systemctl enable --now traxat
 #+END_SRC

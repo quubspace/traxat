@@ -1,0 +1,16 @@
+[Unit]
+Description=Traxat firmware
+Documentation=https://github.com/quubspace/traxat
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/pi
+LimitNOFILE=4096
+PIDFile=/var/run/traxat/traxat.pid
+ExecStart=/usr/bin/traxat
+Restart=on-failure
+StartLimitInterval=600
+
+[Install]
+WantedBy=multi-user.target
