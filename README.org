@@ -1,24 +1,76 @@
-* ast: Automated Satellite Tracker
-ast is a program to enable control of the Quub tabletop satellite tracker,
-powered by rotctld, and fully compatible with GPredict.
+#+BEGIN_HTML
+<div id="traxat-logo" align="center">
+    <br />
+    <img src="images/logo.svg" alt="Traxat Logo" width="225" height="225"/>
+    <h1>Traxat</h1>
+    <h3>Open Source Tabletop Satellite Tracker</h3>
+</div>
+
+<div id="badges" align="center">
+
+  <a href="https://github.com/quubspace/traxat/actions/workflows/software.yml">
+    <img src="https://github.com/quubspace/traxat/actions/workflows/software.yml/badge.svg?branch=main" alt="GitHub Workflow Status"/>
+  </a>
+
+</div>
+#+END_HTML
+
+** About
+The Traxat project is an open-source and open hardware tabletop satellite tracker.
+This repository contains the Rust code for the firmware, the CAD models, and
+instructions for constructing your own Traxat. Fully compatible with GPredict,
+Traxat utilises hamlib and rotctld to enable wide compatibility with a wide
+variety of programs.
 
 ** Building
-ast is guaranteed to build on the Raspberry Pi 4B+ and the Raspberry Pi 3B+. It
-appears to build correctly on the M1 MacBook Pro as well, but all other
+*** Software
+Traxat is guaranteed to build on the Raspberry Pi 4B+ and on the Raspberry Pi
+3B+. It appears to build correctly on the M1 MacBook Pro as well, but all other
 platforms aren't directly supported.
 
-ast is written in Rust, so you will need to have a Rust installation in order to
-compile it. ast is guaranteed to compile with Rust 1.59.0 (stable) or newer, but
-older versions might work.
+Traxat is written in Rust, so you will need to have a Rust installation in order to
+compile it. Traxat is guaranteed to compile with Rust 1.59.0 (stable) or newer, but
+older versions may also work.
 
-To build ast:
+To build Traxat:
 
 #+BEGIN_SRC shell
-$ git clone https://github.com/quubspace/automated-satellite-tracker
-$ cd automated-satellite-tracker
+$ git clone https://github.com/quubspace/traxat
+$ cd traxat/software # To move into the software directory
 $ cargo build --release
 #+END_SRC
 
+Once finished, you can try running Traxat:
+
+#+BEGIN_SRC shell
+$ cd ../ # So we are in the root of the project
+$ ./software/target/release/traxat
+#+END_SRC
+
+In order to use Traxat on system start, copy the service file and binary as root and enable the ~systemd~ service:
+
+#+BEGIN_SRC shell
+$ sudo cp ./software/target/release/traxat /usr/bin
+$ sudo chmod a+x /usr/bin/traxat # So the program is executable
+$ sudo cp traxat.service /etc/systemd/system/
+$ sudo systemctl enable --now traxat
+#+END_SRC
+
+A static IP is recommended for the Raspberry Pi so that your tracking program
+can consistently connect to the unit.
+
+*** Hardware
+The Traxat unit consists of 3D-printed parts, zip-ties, stepper motors, and a
+Raspberry Pi unit (preferably a Pi 4B+ for optimal performance).
+
+The STLs for the 3D-printed parts are included in ~/hardware~.
+
+** Testing
+
+To run manual step tests, make use of the included ~manual_testing.sh~ found in
+~/software~. Simply run ~./manual_testing.sh 10~, where 10 is the number of
+motor steps to run.
+
 ** Credits
-Initial prototypes of ast were inspired by PiTator by @M0JEC on GitHub. Thank
+Initial prototypes of Traxat were inspired by PiTator by @M0JEC on GitHub. Thank
 you to everyone at Quub for your continued support as well.

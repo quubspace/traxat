@@ -1,6 +1,10 @@
 on: [push, pull_request]
 
-name: Rust
+name: Software
+
+defaults:
+  run:
+    working-directory: software
 
 jobs:
   check:
@@ -16,6 +20,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --manifest-path software/Cargo.toml
 
   fmt:
     name: Rustfmt
@@ -31,7 +36,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check
+          args: --all --manifest-path software/Cargo.toml -- --check
 
   clippy:
     name: Clippy
@@ -47,4 +52,4 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings
+          args: --manifest-path software/Cargo.toml -- -D warnings

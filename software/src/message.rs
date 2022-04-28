@@ -11,6 +11,7 @@ use log::debug;
 pub enum Message {
     PSet(f32, f32),
     PGet,
+    StepTest(i32),
     Close,
     NotACommand,
 }
@@ -29,6 +30,7 @@ impl FromStr for Message {
 
         match cmd.as_str() {
             "p" => Ok(Message::PGet),
+            "s" => Ok(Message::StepTest(params[0] as i32)),
             "P" => Ok(Message::PSet(params[0], params[1])),
             "q" => Ok(Message::Close),
             _ => Ok(Message::NotACommand),

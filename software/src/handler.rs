@@ -29,10 +29,20 @@ impl<'a> ActionHandler<'a> {
         format!("{}\n{}", self.rotator.az, self.rotator.ele)
     }
 
+    pub fn handle_step_test(&mut self, quick_rot_steps: i32) -> Result<String> {
+        self.rotator.num_steps = quick_rot_steps;
+        info!("Sending {} steps...", quick_rot_steps);
+
+        self.rotator.test_steppers()?;
+
+        Ok(String::from("\n"))
+    }
+
     pub fn handle_message(&mut self, msg: Message) -> Result<String> {
         match msg {
             Message::PSet(az, ele) => self.handle_p_set(az, ele),
             Message::PGet => Ok(self.handle_p_get()),
+            Message::StepTest(steps) => self.handle_step_test(steps),
             Message::Close => Ok(String::from("rotctld_quit")),
             _ => Ok(String::from("Not a command!")),
         }
