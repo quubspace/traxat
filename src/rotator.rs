@@ -22,8 +22,7 @@ const MOTOR_AZ_GPIO: [u8; 4] = [9, 11, 0, 5];
 const STEPS_PER_ROT: f32 = 512.0;
 
 #[derive(Debug)]
-
-/// A rotator being is represented here
+/// Rotator struct for traxat
 pub struct Rotator {
     /// Elevation
     pub ele: f32,
@@ -38,11 +37,11 @@ pub struct Rotator {
 }
 
 impl Rotator {
-    /// Returns a rotator object from a string. (Should these be called objects?)
+    /// Returns a rotator instance from a string
     ///
     /// # Arguments
     ///
-    /// * `response` - A message in the form of a string.
+    /// * `response` - A message in the form of a string
     ///
     pub fn new() -> Rotator {
         Rotator {
@@ -54,7 +53,7 @@ impl Rotator {
         }
     }
 
-    /// Returns the Result of moving ?????
+    /// Returns the Result of moving a certain amount of steps
     pub fn mv(&mut self) -> Result<()> {
         let steps_per_degree = (STEPS_PER_ROT / 360.0) as f32;
         let ele_steps = (self.ele_target - self.ele) * steps_per_degree as f32;
@@ -81,7 +80,7 @@ impl Rotator {
         Ok(())
     }
 
-    /// Returns a result of zeroing the traxat.
+    /// Returns a Result of zeroing the traxat
     pub fn zero(&mut self) -> Result<()> {
         self.ele_target = 20_f32;
         self.az_target = 0_f32;
@@ -91,7 +90,7 @@ impl Rotator {
         Ok(())
     }
 
-    /// Returns a result of testing the stepper.
+    /// Returns a Result of testing the stepper
     pub fn test_steppers(&self) -> Result<()> {
         let cur_steps = self.num_steps;
         info!("Moving motor {} steps", cur_steps);
@@ -100,13 +99,13 @@ impl Rotator {
         Ok(())
     }
 
-    /// Returns the result of testing the move of the steppers.
+    /// Returns the result of testing the move of the steppers
     ///
     /// # Arguments
     ///
     /// * `steps` - Amount to move
     ///
-    /// * `gpio_pin_list` - Reference to the list of gpios.
+    /// * `gpio_pin_list` - Reference to the list of gpios
     ///
     fn test_move_steppers(&self, steps: i32, gpio_pin_list: &[u8]) -> Result<()> {
         let abs_steps = steps.abs();
@@ -125,13 +124,13 @@ impl Rotator {
         Ok(())
     }
 
-    /// Returns the result of moving the steppers.
+    /// Returns the result of moving the steppers
     ///
     /// # Arguments
     ///
     /// * `steps` - Amount to move
     ///
-    /// * `gpio_pin_list` - Reference to the list of gpios.
+    /// * `gpio_pin_list` - Reference to the list of gpios
     ///
     fn move_steppers(&self, steps: f32, gpio_pin_list: &[u8]) -> Result<()> {
         info!("Moving motor on a {}.", DeviceInfo::new()?.model());
@@ -150,11 +149,11 @@ impl Rotator {
         Ok(())
     }
 
-    /// Returns the result of stepping the pins forward.
+    /// Returns the result of stepping the pins forward
     ///
     /// # Arguments
     ///
-    /// * `pins_list` - Reference to the list of pins.
+    /// * `pins_list` - Reference to the list of pins
     ///
     fn step_pins_forward(&self, pins_list: &[u8]) -> Result<()> {
         let delay_set = 2;
@@ -202,7 +201,7 @@ impl Rotator {
         Ok(())
     }
 
-    /// Returns the result of setting pins back.
+    /// Returns the result of setting pins back
     ///
     /// # Arguments
     ///

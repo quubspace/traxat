@@ -6,14 +6,14 @@ use crate::rotator::Rotator;
 
 #[derive(Debug)]
 
-/// Action handler for .......
+/// Action handler for traxat
 pub struct ActionHandler<'a> {
-    /// Public rotator (object?)
+    /// Public rotator instance
     pub rotator: &'a mut Rotator,
 }
 
 impl<'a> ActionHandler<'a> {
-    /// Returns a ActionHandler with a given Rotator object (Not sure what to change object to)
+    /// Returns an ActionHandler with a given Rotator instance
     ///
     /// # Arguments
     ///
@@ -42,16 +42,16 @@ impl<'a> ActionHandler<'a> {
         Ok(String::from("\n"))
     }
 
-    /// Gets the azimuth and elevation values.
+    /// Gets the azimuth and elevation values
     pub fn handle_p_get(&self) -> String {
         format!("{}\n{}", self.rotator.az, self.rotator.ele)
     }
 
-    /// Returns a Result of the step test.
+    /// Returns a Result of the step test
     ///
     /// # Arguments
     ///
-    /// * `quick_rot_steps` - How many steps to move.
+    /// * `quick_rot_steps` - How many steps to move
     ///
     pub fn handle_step_test(&mut self, quick_rot_steps: i32) -> Result<String> {
         self.rotator.num_steps = quick_rot_steps;
@@ -62,7 +62,7 @@ impl<'a> ActionHandler<'a> {
         Ok(String::from("\n"))
     }
 
-    /// Returns a Result of taking a handling the message.
+    /// Returns a Result of taking a handling the message
     ///
     /// # Arguments
     ///

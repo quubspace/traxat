@@ -8,12 +8,11 @@ use anyhow::Result;
 use log::debug;
 
 #[derive(Debug)]
-
-/// A message being represented here.
+/// A message from gpredict
 pub enum Message {
     /// Pin set function
     PSet(f32, f32),
-    /// Gets ???
+    /// Gets position from gpredict
     PGet,
     /// Step test funcion.
     StepTest(i32),

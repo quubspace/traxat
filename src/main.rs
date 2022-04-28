@@ -62,7 +62,7 @@ fn main() -> Result<()> {
             let ret: String = ActionHandler::new(&mut rotator)
                 .handle_message(Message::from_str(response).unwrap())?;
 
-            // Quit command to close cnnection.
+            // Quit command to close connection.
             if ret == "rotctld_quit" {
                 warn!("Closing connection, rotctld sent quit!");
                 rotator.zero()?;
@@ -114,5 +114,5 @@ fn init_logging() {
         .apply()
         .expect("Failed to dispatch Fern logger!");
 
-    debug!("Logging initialisation complete.");
+    debug!("Logging initialization complete.");
 }
