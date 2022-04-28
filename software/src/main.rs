@@ -12,31 +12,39 @@ use fern::{
 };
 use log::{debug, info, warn, LevelFilter};
 
+// Imports items from other crates
 use handler::ActionHandler;
 use message::Message;
 use rotator::Rotator;
 
+// Organizes code into modules
 mod handler;
 mod message;
 mod rotator;
 
+/// Main function to run the traxat software
 fn main() -> Result<()> {
+    // Initializes logging with Criterion
     init_logging();
 
+    // Create a new rotator object.
     let mut rotator = Rotator::new();
 
-    // Zero position
+    // Sets the motor position to zero.
     rotator.zero()?;
 
+    // Opens a TCP listener on port 4533
     let rotctld_port = "4533";
     let listener = TcpListener::bind(format!("0.0.0.0:{}", rotctld_port))?;
 
     info!("AST is now ready to connect to rotctld.");
 
+    // Listen for rotctld commands and execute them coming in.
     for stream in listener.incoming() {
         let mut stream = stream?;
         let mut buf = [0; 1024];
 
+        // Read data coming in.
         loop {
             let n = match stream.read(&mut buf) {
                 Ok(n) if n == 0 => break,
@@ -54,12 +62,14 @@ fn main() -> Result<()> {
             let ret: String = ActionHandler::new(&mut rotator)
                 .handle_message(Message::from_str(response).unwrap())?;
 
+            // Quit command to close connection.
             if ret == "rotctld_quit" {
                 warn!("Closing connection, rotctld sent quit!");
                 rotator.zero()?;
                 break;
             }
 
+            // Sending
             debug!("Send to rotctld: {:?}", ret);
 
             if let Err(e) = stream.write_all(&buf[0..n]) {
@@ -70,7 +80,9 @@ fn main() -> Result<()> {
     }
     Ok(())
 }
-
+/// Initializes logging.
+///
+/// Changes the colors and format of the logging.
 fn init_logging() {
     let colors_line = ColoredLevelConfig::new()
         .error(Color::Red)
@@ -102,5 +114,5 @@ fn init_logging() {
         .apply()
         .expect("Failed to dispatch Fern logger!");
 
-    debug!("Logging initialisation complete.");
+    debug!("Logging initialization complete.");
 }
