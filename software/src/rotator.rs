@@ -45,9 +45,10 @@ impl Rotator {
     ///
     pub fn new() -> Rotator {
         Rotator {
-            ele: 20_f32,
+            // Based on the implemented logic, this will auto-zero when disengaged and first booted up
+            ele: 0_f32,
             az: 0_f32,
-            ele_target: 20_f32,
+            ele_target: 0_f32,
             az_target: 0_f32,
             num_steps: 0_i32,
         }
