@@ -83,7 +83,7 @@ impl Rotator {
 
     /// Returns a Result of zeroing the traxat
     pub fn zero(&mut self) -> Result<()> {
-        self.ele_target = 20_f32;
+        self.ele_target = 0_f32;
         self.az_target = 0_f32;
 
         self.mv()?;
