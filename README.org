@@ -14,13 +14,34 @@
 
 </div>
 #+END_HTML
-
 ** About
 The Traxat project is an open-source and open hardware tabletop satellite tracker.
 This repository contains the Rust code for the firmware, the CAD models, and
 instructions for constructing your own Traxat. Fully compatible with GPredict,
 Traxat utilises hamlib and rotctld to enable wide compatibility with a wide
 variety of programs.
+
+We are constantly looking to improve the Traxat project, both in design and in
+documentation. Feel free to open an issue or PR!
+
+** Usage
+The project only supports GPredict for tracking, although hypothetically you can
+use a different program.
+
+1. Open GPredict on a separate computer. Within GPredict's
+settings, you should see the ability to add radios and rotators. Add your Traxat
+unit's IP address as a rotator, and keep the default port.
+
+2. Power on your Traxat unit. If you followed the system service instructions
+   when assembling, this is all you need to do.
+
+3. Back in GPredict, you should see a small drop-down arrow near a map. When you select this, you will see rotator control. Click the menu.
+
+4. You should now see a new window with various numbers. On the right side, you
+   should see the name of your Traxat unit and an engage button. Once you select
+   that, Traxat should start tracking.
+
+5. For further problems, consider opening an issue.
 
 ** Building
 *** Software
@@ -57,13 +78,63 @@ $ sudo systemctl enable --now traxat
 #+END_SRC
 
 A static IP is recommended for the Raspberry Pi so that your tracking program
-can consistently connect to the unit.
+can consistently connect to the unit, and through testing ethernet is more
+consistent than Wi-Fi.
 
 *** Hardware
-The Traxat unit consists of 3D-printed parts, zip-ties, stepper motors, and a
+The Traxat unit consists of 3D-printed parts, screws, stepper motors, and a
 Raspberry Pi unit (preferably a Pi 4B+ for optimal performance).
 
+
+
 The STLs for the 3D-printed parts are included in ~/hardware~.
+
+**** Bill of Materials
+| Qty | Item                 | Notes                                                                 |
+|-----+----------------------+-----------------------------------------------------------------------|
+|   1 | Raspberry Pi 4B+ 1GB | Any Pi 4 can be swapped in                                            |
+|   1 | Each 3D-Printed Part | Parts can be printed in PLA or preferred material                     |
+|   2 | Stepper Motors       | Can use any stepper motor, but platform is designed for specified one |
+|   8 | M3x? Screws and Nuts | Holds the unit together                                               |
+
+**** Assembly
+1. Place your Raspberry Pi in the base, with power ports facing towards the side
+opening.
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="./images/raspberry-pi-in-base.jpeg" alt="A Raspberry Pi placed into the base of the unit" width="300"/>
+</p>
+#+END_HTML
+
+2. Screw a stepper motor onto the carriage, using the slots to adjust
+where you want your motor.
+
+3. Attach the second stepper motor to the platform, pushing the connector
+   through the bottom hole and using the screws to fasten it together.
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="./images/platform-assembly.jpg" alt="Platform assembly for Traxat unit" width="300"/>
+</p>
+#+END_HTML
+
+4. Place the platform assembly on top of the first motor on the carriage, and
+   route the connectors down to the Pi.
+
+5. Connect the motor control boards to the motors, and then wire them to the
+   Raspberry Pi as shown in the first photo and documented in
+   ~software/src/rotator.rs~. Ensure your azimuth and elevation are not flipped.
+
+6. Use the remaining screws to screw the carriage to the lid.
+
+7. Marvel at your finished Traxat unit!
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="./images/assembled-unit.jpg" alt="Finished Traxat unit" width="300"/>
+</p>
+#+END_HTML
 
 ** Testing
 
