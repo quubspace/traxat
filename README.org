@@ -28,9 +28,9 @@ documentation. Feel free to open an issue or PR!
 The project only supports GPredict for tracking, although hypothetically you can
 use a different program.
 
-1. Open GPredict on a separate computer. Within GPredict's
-settings, you should see the ability to add radios and rotators. Add your Traxat
-unit's IP address as a rotator, and keep the default port.
+1. Open GPredict on a separate computer. Within GPredict's settings, you should
+   see the ability to add radios and rotators. Add your Traxat unit's IP address
+   as a rotator, and keep the default port.
 
 2. Traxat does not automatically zero. In order to do so manually, push the
    pointer all the way to the left, and line up the motor as close to center as
