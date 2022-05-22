@@ -32,16 +32,20 @@ use a different program.
 settings, you should see the ability to add radios and rotators. Add your Traxat
 unit's IP address as a rotator, and keep the default port.
 
-2. Power on your Traxat unit. If you followed the system service instructions
+2. Traxat does not automatically zero. In order to do so manually, push the
+   pointer all the way to the left, and line up the motor as close to center as
+   you can.
+
+3. Power on your Traxat unit. If you followed the system service instructions
    when assembling, this is all you need to do.
 
-3. Back in GPredict, you should see a small drop-down arrow near a map. When you select this, you will see rotator control. Click the menu.
+4. Back in GPredict, you should see a small drop-down arrow near a map. When you select this, you will see rotator control. Click the menu.
 
-4. You should now see a new window with various numbers. On the right side, you
+5. You should now see a new window with various numbers. On the right side, you
    should see the name of your Traxat unit and an engage button. Once you select
    that, Traxat should start tracking.
 
-5. For further problems, consider opening an issue.
+6. For further problems, consider opening an issue.
 
 ** Building
 *** Software
@@ -85,8 +89,6 @@ consistent than Wi-Fi.
 The Traxat unit consists of 3D-printed parts, screws, stepper motors, and a
 Raspberry Pi unit (preferably a Pi 4B+ for optimal performance).
 
-
-
 The STLs for the 3D-printed parts are included in ~/hardware~.
 
 **** Bill of Materials
@@ -95,7 +97,7 @@ The STLs for the 3D-printed parts are included in ~/hardware~.
 |   1 | Raspberry Pi 4B+ 1GB | Any Pi 4 can be swapped in                                            |
 |   1 | Each 3D-Printed Part | Parts can be printed in PLA or preferred material                     |
 |   2 | Stepper Motors       | Can use any stepper motor, but platform is designed for specified one |
-|   8 | M3x? Screws and Nuts | Holds the unit together                                               |
+|   8 | M3 Screws and Nuts   | Holds the unit together                                               |
 
 **** Assembly
 1. Place your Raspberry Pi in the base, with power ports facing towards the side
